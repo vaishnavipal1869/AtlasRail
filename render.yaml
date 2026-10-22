@@ -1,0 +1,26 @@
+# AtlasRail — Render blueprint (Blueprints → New → from this repo)
+#
+# Hosts the API as a Docker web service on the free plan.
+# The frontend is deployed separately on Vercel (see frontend/vercel.json).
+#
+# After the first deploy, set the real frontend URL in AtlasRail_CORS_ORIGINS
+# (only needed if the frontend calls the API cross-origin instead of proxying).
+
+services:
+  - type: web
+    name: AtlasRail-api
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    healthCheckPath: /healthz
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      - key: AtlasRail_ENVIRONMENT
+        value: production
+      - key: AtlasRail_SECRET_KEY
+        generateValue: true
+      - key: AtlasRail_CORS_ORIGINS
+        value: https://AtlasRail.vercel.app,http://localhost:5173

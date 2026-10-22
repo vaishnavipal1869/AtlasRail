@@ -1,0 +1,23 @@
+# AtlasRail — full self-host stack (optional alternative to Render + Vercel).
+#   docker compose up --build
+# Web:  http://localhost:8080
+# API:  http://localhost:8000  (docs at /docs)
+services:
+  api:
+    build: ./backend
+    environment:
+      AtlasRail_ENVIRONMENT: production
+      # Generate once: python -c "import secrets; print(secrets.token_urlsafe(48))"
+      AtlasRail_SECRET_KEY: ${AtlasRail_SECRET_KEY:?Set AtlasRail_SECRET_KEY in your shell or .env}
+      AtlasRail_CORS_ORIGINS: http://localhost:8080
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
